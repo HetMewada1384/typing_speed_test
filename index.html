@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Test</title>
+
+
+  
+<style>
+  .active-press {
+    background-color: #ffdd57; /* Change this color to your desired active-press color */
+    color: #333; /* Change this color to the desired text color for active-press state */
+  }
+ body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #00000084;
+}
+
+.container {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 21px;
+  padding: 20px;
+  box-shadow: 14px 21px 23px 5px rgba(0, 0, 0, 1);
+  max-width: 800px;
+  width: 100%;
+  margin-left:237px;
+}
+#text-display {
+  font-size: 18px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+#user-input:focus {
+  outline: none;
+  border-color: #66afe9;
+}
+
+#start-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  position:relative;
+  background-color: #66afe9;
+  color: #fff;
+  border: none;
+  right: -319px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+#start-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+
+
+.keyboard {
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      grid-template-rows: repeat(5, 60px);
+      gap: 5px;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .key {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      background-color: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      user-select: none;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1), 0 8px 10px rgba(0, 0, 0, 0.1);
+      transform: translateZ(0);
+    }
+
+    .key:hover {
+      background-color: #dcdcdc;
+      transform: translateY(-2px);
+    }
+    .pressed ,.real-pressed {
+      background-color: #2a2c2e;
+      color:#ccc
+    }
+
+    /* Custom style for the space bar */
+    .space-bar1 {
+      grid-column: span 14;
+      width: 804px; /* Adjust width as needed */
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1), 0 8px 10px rgba(0, 0, 0, 0.1);
+    }
+    .space-bar{
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1), 0 8px 10px rgba(0, 0, 0, 0.1);
+
+    }
+    .backspace{
+        width: 51px;
+    }
+
+
+
+
+
+
+
+
+
+    .time-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.time-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #66afe9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+
+#timer {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+.correct {
+  color:#27ae60
+}
+
+.incorrect {
+  color:#c0392b
+}
+
+
+.dashboard{
+position: fixed ;
+    top: 0;
+    left: 0px; /* Initially hidden */
+    width:317   px;
+    border-radius: 0px 111px;
+    background-color: #7fdff2;
+    box-shadow: 14px 21px 23px 5px rgba(0, 0, 0, 1);
+    padding: 20px;
+    transition: left 0.3s;
+   
+}
+
+
+
+  /* Style for the toggle button */
+  #toggle-dashboard-btn {
+    margin-bottom: 400px;
+    margin-left:300px;
+    position: fixed;
+  }
+
+  /* Style for the level links */
+  .level-link {
+    display: block;
+    padding: 5px 0;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .level-link:hover {
+    color: #66afe9;
+  }
+
+
+
+  .hamburger {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.hamburger span {
+  width: 23px;
+  height: 3px;
+  background-color: #333;
+}
+
+</style>
+</head>
+<body>
+  <div id="hamburger-menu" class="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <!-- Dashboard -->
+  <div id="dashboard" class="dashboard">
+
+    <ul class="level-list">
+      <li>Beginner
+        <ul class="level-sublist">
+          <li><input type="radio" name="level" value="1" id="level-1" data-level="1">level 1 (Middle Row)</li>
+          <li><input type="radio" name="level" value="2" id="level-2" data-level="2" >level 2 (Top Row)</li>
+         <li><input type="radio" name="level" value="3" id="level-3" data-level="3" >level 3 (bottom Row) </li>        
+        </ul>
+      </li>
+      <li>Intermediate
+        <ul class="level-sublist">
+          <li><input type="radio" name="level" id="level-4">level 4 (Middle & Top Row)</li>
+          <li><input type="radio" name="level" id="level-5">level 5 (Middle & Bottom Row)</li>
+          <li><input type="radio" name="level" id="level-6">level 6 (Top & Bottom Row)</li>
+          </ul>
+          <!-- Add other levels here -->
+      </li>
+      <li>Advance
+        <ul class="level-sublist">
+          <li><input type="radio" name="level" id="level-7" >level 7 (All 3 Rows)</li>
+          </ul>
+        </li>
+
+        <li>Master
+          <ul class="level-sublist">
+            <li><input type="radio" name="level" id="level-8" >level 8 (All 3 Rows + Symbols)</li>
+            </ul>
+          </li>
+    </ul>
+      <!-- Add more lists as needed -->
+    </ul>
+  </div>
+<div class="container">
+    <div id="text-display"></div>
+    <textarea id="user-input" placeholder="Start typing here..." style="height:71px;width:629px;" disabled></textarea>
+    <button id="start-btn" style="display:none;">Start Typing Test</button>
+    <div class="time-buttons">
+      <button class="time-btn" data-time="60" >1 min</button>
+      <button class="time-btn" data-time="120" >2 min</button>
+      <button class="time-btn" data-time="180" >5 min</button>
+    </div>
+    <div id="timer">00:00</div>
+      <div class="keyboard col-md-8" id="virtual-keyboard">
+        <!-- First row -->
+        <div class="key" data-key="192">`</div>
+        <div class="key" data-key="49">1</div>
+        <div class="key" data-key="50">2</div>
+        <div class="key" data-key="51">3</div>
+        <div class="key" data-key="52">4</div>
+        <div class="key" data-key="53">5</div>
+        <div class="key" data-key="54">6</div>
+        <div class="key" data-key="55">7</div>
+        <div class="key" data-key="56">8</div>
+        <div class="key" data-key="57">9</div>
+        <div class="key" data-key="48">0</div>
+        <div class="key" data-key="189">-</div>
+        <div class="key" data-key="187">=</div>
+        <div class="key backspace" data-key=""><i class="fas fa-backspace"></i></div>
+        
+        <!-- Second row -->
+        <div class="key" data-key="9">Tab</div>
+        <div class="key" data-key="81">Q</div>
+        <div class="key" data-key="87">W</div>
+        <div class="key" data-key="69">E</div>
+        <div class="key" data-key="82">R</div>
+        <div class="key" data-key="84">T</div>
+        <div class="key" data-key="89">Y</div>
+        <div class="key" data-key="85">U</div>
+        <div class="key" data-key="73">I</div>
+        <div class="key" data-key="79">O</div>
+        <div class="key" data-key="80">P</div>
+        <div class="key" data-key="219">[</div>
+        <div class="key" data-key="221">]</div>
+        <div class="key" data-key="220">\</div>
+        
+        <!-- Third row -->
+        <div class="key space-bar" data-key="20">Caps Lock</div>
+        <div class="key space-bar" data-key="65">A</div>
+        <div class="key space-bar" data-key="83">S</div>
+        <div class="key space-bar" data-key="68">D</div>
+        <div class="key space-bar" data-key="70">F</div>
+        <div class="key space-bar" data-key="71">G</div>
+        <div class="key space-bar" data-key="72">H</div>
+        <div class="key space-bar" data-key="74">J</div>
+        <div class="key space-bar" data-key="75">K</div>
+        <div class="key space-bar" data-key="76">L</div>
+        <div class="key space-bar" data-key="186">;</div>
+        <div class="key space-bar" data-key="222">'</div>
+        <div class="key space-bar" data-key="13">Enter</div>
+        
+        <!-- Fourth row -->
+        <div class="key space-bar" data-key="16">Shift</div>
+        <div class="key space-bar" data-key="90">Z</div>
+        <div class="key space-bar" data-key="88">X</div>
+        <div class="key space-bar" data-key="67">C</div>
+        <div class="key space-bar" data-key="86">V</div>
+        <div class="key space-bar" data-key="66">B</div>
+        <div class="key space-bar" data-key="78">N</div>
+        <div class="key space-bar" data-key="77">M</div>
+        <div class="key space-bar" data-key="188">,</div>
+        <div class="key space-bar" data-key="190">.</div>
+        <div class="key space-bar" data-key="191">/</div>
+        <div class="key space-bar" data-key="16">Shift</div>
+        
+        <!-- Fifth row -->
+        <div class="key space-bar" data-key="17">Ctrl</div>
+        <div class="key space-bar" data-key="91">Win</div>
+        <div class="key space-bar" data-key="18">Alt</div>
+        <div class="key  space-bar1" data-key="32">Space</div>
+      </div>
+    </div>
+  <script>
+    function calculateAccuracy(userText, correctText) {
+  const userWords = userText.split(' ');
+  const correctWords = correctText.split(' ');
+
+  let correctWordCount = 0;
+  for (let i = 0; i < userWords.length; i++) {
+    if (i < correctWords.length && userWords[i] === correctWords[i]) {
+      correctWordCount++;
+    }
+  }
+
+  return Math.round((correctWordCount / correctWords.length) * 100);
+}
+
+     const MIN_TYPING_SPEED = 5; // Adjust this as needed
+    const MIN_ACCURACY = 80; // Adjust this as needed
+    const startBtn = document.getElementById('start-btn');
+    const textDisplay = document.getElementById('text-display');
+    const userInput = document.getElementById('user-input');
+    const level1Radio = document.getElementById('level-1');
+    const level2Radio = document.getElementById('level-2');
+    const level3Radio = document.getElementById('level-3');
+    const level4Radio = document.getElementById('level-4');
+    const level5Radio = document.getElementById('level-5');
+    const level6Radio = document.getElementById('level-6');
+    const level7Radio = document.getElementById('level-7');
+    const level8Radio = document.getElementById('level-8');
+
+
+const paragraphs = [
+  // middle row
+  `safj lkdsjaf lkjdsf lkjads flkjads lkjaf lkjads fkljads lkj`,
+  `dsfjal ksdjf lksjadf lksjad lfkjsa lkjdf lkjasd lfkjdsa l`,
+  `alkjdf lsajdfk ljsdaf lksjadf lkjasd lfkjads lkjaf lkf.`,
+  `sdlfkjasd lfkjasd lkjaf lskjdf lkjasd flkjasd lkjaf lk`,
+  `asdf lkjds lfkjasd lkjaf lfkjads lkjasd flkjad`,
+  `lkjdsf lkjads flkjads lfkjasd lkjads flkjasd lkjaf l`,
+  `jdsaf lkjasd lfkjasd lkjaf lskjdf lkjads flkjads lkj`,
+  `df lkjds lfkjads lkjasd lfkjasd lkjaf lkjasd flkjads`,
+  `kjdsaf lkjads flkjasd lkjaf lkjds lfkjasd lkjaf lkj`,
+  `f lkjds lfkjads lkjaf lskjdf lkjasd flkjasd lkjaf l`,
+  //top row
+  `qw ertyu iopqwe rtyuio pqwe rtyui opqwe rtyuio pqwe rtyui op`,
+`uiopq werty uio pqwe rtyui opqw ertyu io pqwe rtyui opqwe rt`,
+`yuiop qwert yuio pqwe rtyui opqw ertyu io pqwe rtyui opqwe rt`,
+`wertyu iopqw ertyu io pqwe rtyui opqw ertyu io pqwe rtyui opq`,
+`iopqw ertyu iopqwe rtyuio pqwe rtyui opqw ertyu io pqwe rtyu`,
+`qwerty uio pqwe rtyuio pqwe rtyui opqw ertyu io pqwe rtyui op`,
+`yuiop qwert yuio pqwe rtyui opqw ertyu io pqwe rt`,
+`wertyu iopqw ertyu io pqwe rtyui opqw ertyu io pq`,
+`iopqw ertyu iopqwe rtyuio pqwe rtyui opqw ertyu io pqwe rt`,
+`wt trete tr ureyt yrtu uert tur qwet uir ioury rey we wtruqwey`,
+// lower row 
+`zxcvbnmzxcvbnm z xcvbnm xcv bnm zxcvb nmzx cvbnmzxcvbnm`,
+`xcvbnm zx cvbnm z xcv bnmzxcv bnmzxcvbn zxcvbnmzxcvbnmz`,
+`cv bnmzx cv bnm zxcvbnmzxcvbnmzxc vbnmzxcvbnmzxcvbnmzx`,
+`vbnmzxc v bnmz xcv bnmz xc vbnmzx cvbnmzx cvbnmz xcvbnmzxc`,
+`bnmzxcv b nmz xcvbnmzx cvbnm zxcvbnm zx cvbnmz xcvbnmzxcv`,
+`zxcvbnmz xcvbnmzxcv b nmzxc vbnmzxcv bnmzxcv bnmzxcvbnm`,
+`xcb cvcXZv nb XZ bn bbx vcnx cxzb mbb cxbxz cvx vcn`,
+`cvxzb nvbx cvz cb v vbz zxvxcv vcbncvn xcvxcn cvb znv`,
+`cbxz bcvnb bcxbc zcz vn bvbn bcxz ncx zxc ncc xz`,
+`mnz zvnbz nbz xzbxvczx xzv bvc nbm ncv xcbn`,
+// Add more 10-line paragraphs here.`
+//top-middle row
+`ugwey fu hifewui wei uhfew ui whiew iwe fwhrfo wurfwrou`,
+`yuq euhde wyu fiuhe wfy uwgefgyhiw yuef yewg fowef hug`,
+`wqhui ide yewdye w fhi wef iuhw eugweuyfdweiuh`,
+`oipe fiw hfew udye gyfi urwfuirgrqwww os dpo qqd`,
+`uie uh dfew ug fwerf lregeu ifwyq wdtfqyu ewiowef`,
+`rtyt fgd uihewfhuiwfyugrfgrfyfgquwdf qedew iufhiewf`,
+`lha suiewf uhwefhi wr eifurfu hpjil ewuf hei wfgfqqr wsy`,
+`tyqdu hewf uhweufhk ufiweiop eihwq gdqwkl daduide`,
+`lhasgu duiefd ewihfwihfup hfi yutu qwdukqde qodi`,
+`kag euhfwh efgfwy uifiruia oloy gq yu diiweug fyuwrf`,
+//middle-bottom row 
+"jjbns kdbchbs dkvfl svbdfjslbv kslvj bsfv sv",
+"jkd sbcshdb vchjavhcgas cksdv lvlsd bvlshb vhsd",
+"jsabcja sgxasnm cjdsk vlsddjbc hkvkvc sjbvhfsb",
+"asbxnvanc xhsdvcmfdsvb fdlkvlfvbks cshacb dnckjd",
+"mbvcks dclsdcbac hsvxga asvcnx vagc dhfldsfa dvcsl",
+"nmbvhnas vjchjds mcsdhmkvfsk vblfs vjsk bcbs hcvasjcjsd",
+"lkhld sjcvsdn cmsd bcsdh vchsn bvhsbcn nsd bcmsdhcbhmsv",
+"nbvznscvj had bcjsbdhcv shmd zhcvh gv dcmbsm dzhvhj csfbvmv",
+"bmz xascx ghc jhdbvfd bh bsdkjbc cj bdjfsbc vhdshcvfs dhbv",
+"bvcgc hgcdv dsnc hvdfs vbjfd sbvks cjbsjdhvcj sdvcvs cvsjhd",
+//top-bottom row
+"mo puetert revmt ewpcr ewy oity ne rvtonvirocyn",
+"onne uycur tr ccwyn uxmowe xrwepqw mpx cviuc",
+"mbcvui cxy iuvtic xutuby crbiuxc tbocx oo bxzp",
+"ppic ipobounbp omupn iyoun utzrb urcuycetw tvz",
+"ewrmb tmwebt rmwbyn uvmui vytopp cvbve rxy zwqq",
+"mpnbonc uzixuyrb vy tewc vr eqncqrenybvnyubtvy",
+"rtry iiomt nymb rentvb wcrc ynrc eity bocvyx ibvq",
+"mn merbnc vbco ivpxycxc ezxrca xcxcv wrvzyw xrtz",
+"nmcvioc brewr enwrmenbq cyuxu zvpoZ ioiyb uivir",
+"ucvut yvtrb erwnw nmey ubvixpoi zcxuyxcrt cervu",
+//all row  
+"jejcwgf ieu rfkjejvnla ienh ourebfgc eiab vewvnbec",
+"nmzxchj gewufhe wlifp iowefce wkjagfue yxfgv fukef yue",
+"qwoiew cnjwe bfhxl sdiufgkyew cfevwzef kuewgci awaclw",
+"pooqej fnsdkf cdx mdbf casbf ytawx enufg eruycfenivht",
+"qw0r ewhjbc nbzx mn fdhje wgfi erhofls bjfoewifp isj kcsdvhjs",
+"cxfqw ednq wmn csh zcyuew fuwhe vcyjwe fgdyahvs duy weafuks",
+"lkhasdf nmsdb fhrwgufyrwe uebcvnmzm mlaopa yweiu qwrfjewbff",
+"mnsjhd gewyjdannb zxmnkjziofd weiofwlefpowe iewyiufgsdf jsht",
+"ohbnb axjygcw eb dfbnx sch uidsbweh gve uidndsh sja dbm auihd ofb",
+"gh fhazftxy ewhdcv snmcs dbvij hsfdoihs nbvka sbnc adcl sakn cwpo",
+//all with symbols 
+"mn/b zdsk.jfrf eo,ireo w.hfo ,we xm.bdmf n,bvs ervg'ew;r",
+"sgwbaw kctwle hioqyefa xg>eu/rea ifox h'ewnf.xqgo ,foqa",
+"mns/cvhe wa'yuf ewnds'mnfe sdoigre t'l,dsj heu,ie poid",
+"poll k,sjk dfnm sdc.nmbz,xrft. vyaefg wefsgj,br fsgrrg",
+"nm vzmx,c,gh .ewfy,ew hfve;wy,f giuewfcldsvc bdmb'vk,sgsf",
+"xchybzxc hfewuyfd, yqdqwhd,mas kjd.,ufwe,j ydjmafjye wfwe",
+"l,khsdclj dsb,gjke.ogiev hjs/bdjc vewkifgkre uw.bfy uerf",
+"hjgjds voidv.nc cnvds;kjcvl zxi.co e,wfwegrf/iud svbjsdbvir",
+"iaui sicf'ugdfve/wyuie;wgfj b,dsjhv fcyu,as g,fde'wso i.fisuh",
+"bb/nz xhjc,iu dsvo;ijreo pi.vwsugc vwhe;rfbe a.uifc'gew ubc",
+,
+];
+function displayParagraph() {
+  currentParagraph = getRandomParagraph();
+  textDisplay.innerHTML = currentParagraph;
+  userInput.value = '';
+  userInput.disabled = false;
+  userInput.focus();
+}
+
+
+
+
+function getDisplayHTMLWithMistakes(correctText, userText) {
+  let displayHTML = '';
+  for (let i = 0; i < correctText.length; i++) {
+    if (i < userText.length) {
+      if (userText[i] === correctText[i]) {
+        displayHTML += `<span class="correct">${correctText[i]}</span>`;
+      } else {
+        displayHTML += `<span class="incorrect">${correctText[i]}</span>`;
+      }
+    } else {
+      displayHTML += correctText[i];
+    }
+  }
+  return displayHTML;
+}
+
+userInput.addEventListener('input', () => {
+  if (!isTestRunning) return;
+
+  const userText = userInput.value;
+  const displayText = textDisplay.textContent;
+
+  const displayHTML = getDisplayHTMLWithMistakes(userText, displayText);
+  textDisplay.innerHTML = displayHTML;
+});
+
+
+
+userInput.addEventListener('input', () => {
+  if (!isTestRunning) return;
+
+  const userText = userInput.value.trim();
+  const displayText = currentParagraph.replace(/\s+/g, ' ').trim(); // Normalize spaces
+
+  if (userText === displayText) {
+    clearTimeout(timer);
+    calculateTypingSpeedAndAccuracy(); // End the test and display the result
+  } else {
+    const displayHTML = getDisplayHTMLWithMistakes(displayText, userText);
+    textDisplay.innerHTML = displayHTML;
+  }
+});
+
+function calculateTypingSpeed() {
+  const userText = userInput.value.trim();
+  const words = userText.split(' ');
+  const wordsPerMinute = Math.round((words.length / 2) / ((Date.now() - startTime) / 60000));
+
+  // You can calculate accuracy by comparing userText with currentParagraph.
+  // For simplicity, I'm just showing the words per minute for now.
+
+  // Highlight mistakes
+  const correctText = currentParagraph.split(' ');
+  const userTypedText = userText.split(' ');
+
+  const displayHTML = getDisplayHTMLWithMistakes(userTypedText, correctText);
+  textDisplay.innerHTML = displayHTML;
+  userInput.disabled = true;
+}
+
+function calculateTypingSpeedAndAccuracy() {
+  const userText = userInput.value.trim();
+  const wordsTyped = userText.split(' ').length;
+  const elapsedTimeInMinutes = (Date.now() - startTime) / 60000;
+
+  const typingSpeed = Math.round(wordsTyped / elapsedTimeInMinutes);
+  const accuracy = calculateAccuracy(userText, currentParagraph);
+
+  const resultText = `Typing speed: ${typingSpeed} words/min | Accuracy: ${accuracy}%`;
+  timerDisplay.insertAdjacentHTML('afterend', `<p class="results">${resultText}</p>`);
+}
+
+ // Function to get paragraphs based on the selected level
+ function getParagraphsForLevel(level) {
+      const startIndex = (level - 1) * 10; // Calculate the starting index
+      const endIndex = startIndex + 10; // Calculate the ending index (exclusive)
+      return paragraphs.slice(startIndex, endIndex);
+    }
+    function displayParagraphForLevel(level) {
+      const paragraphsForLevel = getParagraphsForLevel(level);
+      const randomIndex = Math.floor(Math.random() * paragraphsForLevel.length);
+      currentParagraph = paragraphsForLevel[randomIndex];
+      textDisplay.innerHTML = currentParagraph;
+      userInput.value = '';
+      userInput.disabled = true;
+      userInput.focus();
+    }
+
+     // Event listener for level 1 radio
+     level1Radio.addEventListener('change', () => {
+  if (level1Radio.checked = true); {
+    currentLevel = 1;
+    
+    displayParagraphForLevel(1);
+  }
+});
+
+level2Radio.addEventListener('change', () => {
+  if (level2Radio.checked = true) {
+    displayParagraphForLevel(2);
+  } 
+});
+
+level3Radio.addEventListener('change', () => {
+  if (    level3Radio.checked = true); {
+    displayParagraphForLevel(3);
+  }
+});
+
+level4Radio.addEventListener('change', () => {
+  if (    level4Radio.checked = true); {
+    displayParagraphForLevel(4);
+  }
+});
+level5Radio.addEventListener('change', () => {
+  if (    level5Radio.checked = true); {
+    displayParagraphForLevel(5);
+  }
+});
+level6Radio.addEventListener('change', () => {
+  if (    level6Radio.checked = true); {
+    displayParagraphForLevel(6);
+  }
+});
+level7Radio.addEventListener('change', () => {
+  if (    level7Radio.checked = true); {
+    displayParagraphForLevel(7);
+  }
+});
+level8Radio.addEventListener('change', () => {
+  if (    level8Radio.checked = true); {
+    displayParagraphForLevel(8);
+  }
+});
+
+
+let currentParagraph;
+let startTime;
+let timer;
+let isTestRunning = false;
+
+<!--keyboard-->
+const keys = document.querySelectorAll('.key');
+
+function pressKey(event) {
+    const key = event.target;
+    key.classList.add('pressed', 'active-press');
+  }
+
+  // Updated releaseKey function to remove "active-press" class
+  function releaseKey(event) {
+    const key = event.target;
+    key.classList.remove('pressed', 'active-press');
+  }
+
+function resetVirtualKeys() {
+      const virtualKeys = document.querySelectorAll('.key');
+      virtualKeys.forEach(key => {
+        key.style.backgroundColor = "#f1f1f1"; // Default background color
+        key.style.color = "#000"; // Default text color
+      });
+    }
+
+    let keyResetTimer; // Variable to store the timer ID
+
+function updateVirtualKey(event) {
+  clearTimeout(keyResetTimer); // Clear the previous timer, if any
+
+  const keyCode = event.keyCode;
+  const virtualKey = document.querySelector(`[data-key="${keyCode}"]`);
+
+  if (virtualKey) {
+    const pressedChar = String.fromCharCode(keyCode);
+    const currentChar = currentParagraph[userInput.value.length];
+
+  }
+}
+
+window.addEventListener('keydown', (event) => {
+  if (!event.repeat) {
+    const keyElement = document.querySelector(`[data-key="${event.keyCode}"]`);
+    if (keyElement) {
+      keyElement.classList.add('real-pressed');
+    }
+  }
+});
+
+window.addEventListener('keyup', (event) => {
+  const keyElement = document.querySelector(`[data-key="${event.keyCode}"]`);
+  if (keyElement) {
+    keyElement.classList.remove('real-pressed');
+  }
+});
+
+keys.forEach(key => {
+  key.addEventListener('mousedown', pressKey);
+  key.addEventListener('mouseup', releaseKey);
+  key.addEventListener('mouseout', releaseKey);
+  key.addEventListener('touchstart', pressKey);
+  key.addEventListener('touchend', releaseKey);
+});
+
+window.addEventListener('keydown', updateVirtualKey);
+window.addEventListener('keyup', updateVirtualKey); 
+
+
+
+
+
+
+
+const timeButtons = document.querySelectorAll('.time-btn');
+const timerDisplay = document.getElementById('timer');
+let countdownInterval;
+let selectedTime = 0;
+
+function startCountdown() {
+  let remainingTimeInSeconds = selectedTime * 60; // Convert selectedTime to seconds
+  clearInterval(countdownInterval);
+
+  countdownInterval = setInterval(() => {
+    const minutes = Math.floor(remainingTimeInSeconds / 60);
+    const seconds = remainingTimeInSeconds % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timerDisplay.textContent = formattedTime;
+
+    if (remainingTimeInSeconds <= 0) {
+      clearInterval(countdownInterval);
+      timerDisplay.textContent = "Time's up!";
+      userInput.disabled = true;
+
+      calculateTypingSpeed(); // Call the function even if time's up
+    }
+
+    remainingTimeInSeconds--;
+  }, 1000);
+}
+
+ const input_field=document.getElementById('user-input')
+ function startTypingTest() {
+  if (isTestRunning)
+    return;
+  input_field.disable = false;
+  isTestRunning = true;
+  level1Radio.disabled = true;
+  level2Radio.disabled = true;
+  level3Radio.disabled = true;
+  level4Radio.disabled = true;
+  level5Radio.disabled = true;
+  level6Radio.disabled = true;
+  level7Radio.disabled=true;
+
+  startBtn.disabled = true;
+  startTime = Date.now();
+
+  timer = setTimeout(() => {
+    calculateTypingSpeed();
+    isTestRunning = false;
+    startBtn.disabled = false;
+  }, 120000); // 2 minutes in milliseconds
+
+  startBtn.disabled = true;
+  userInput.disabled = false;
+
+  startCountdown();
+  userInput.focus(); // Add this line to ensure focus on the input field
+}
+
+timeButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    selectedTime = parseInt(button.textContent);
+    document.querySelector('.time-buttons').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'block';
+
+  });
+});
+
+startBtn.addEventListener('click', startTypingTest);
+
+
+//dashboard
+  // Toggle dashboard visibility
+  const hamburgerMenu = document.getElementById('hamburger-menu');
+const dashboard = document.getElementById('dashboard');
+
+hamburgerMenu.addEventListener('click', () => {
+  dashboard.style.display = dashboard.style.display === 'none' ? 'block' : 'none';
+});
+</script>
+</body>
+   
