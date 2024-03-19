@@ -699,6 +699,7 @@ function startCountdown() {
       clearInterval(countdownInterval);
       timerDisplay.textContent = "Time's up!";
       userInput.disabled = true;
+      level8Radio.disabled = true;
 
       calculateTypingSpeed(); // Call the function even if time's up
     }
